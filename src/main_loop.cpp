@@ -254,6 +254,9 @@ void parking_mode(void) {
     StampFly.pid.pitch.reset();
     StampFly.pid.yaw.reset();
 
+    //Send range sensor value by USB Serial
+    //USBSerial.printf("Bottom ToF Range: %04d\n", StampFly.sensor.bottom_tof_range);
+
     //Mode change
     if (armButtonPressedAndRerleased)StampFly.flag.mode = FLIGHT_MODE;
     armButtonPressedAndRerleased = 0;

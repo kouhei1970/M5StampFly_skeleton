@@ -105,7 +105,7 @@ void sensor_calc_offset_avarage(void) {
 void sensor_read(sensor_value_t* data) {
     float acc_x, acc_y, acc_z, roll_rate, pitch_rate, yaw_rate;
     float roll_angle, pitch_angle, yaw_angle;
-    uint16_t bottom_tof_range;
+    static uint16_t bottom_tof_range=0;
     float voltage;
 
     // 以下では航空工学の座標軸の取り方に従って
@@ -149,6 +149,17 @@ void sensor_read(sensor_value_t* data) {
     // Battery voltage check
     voltage   = ina3221.getVoltage(INA3221_CH2);
 
+    // Get ToF bottom range
+    //bottom_tof_range = 0;
+    if (ToF_bottom_data_ready_flag) {
+        ToF_bottom_data_ready_flag = 0;
+        // 距離の値の更新
+        bottom_tof_range = tof_bottom_get_range();
+        //USBSerial.printf("%04d\n\r", bottom_tof_range);
+    }
+    // Set sensor data
+    data->bottom_tof_range = bottom_tof_range;
+
     // set value
     data->accx = acc_x;
     data->accy = acc_y;
@@ -171,7 +182,7 @@ void bottom_tof_read(sensor_value_t* data) {
         ToF_bottom_data_ready_flag = 0;
         // 距離の値の更新
         range = tof_bottom_get_range();
-        //USBSerial.printf("%04d\n\r", bottom_tof_range);
+        USBSerial.printf("%04d\n\r", range);
     }
     data->bottom_tof_range = range;   
 }
